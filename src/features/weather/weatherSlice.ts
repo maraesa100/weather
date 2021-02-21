@@ -1,16 +1,21 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { AppThunk, RootState } from '../../app/store'
+import axios from 'axios'
 
 interface WeatherState {
   loading: boolean
-  data: {}
+  postcodeData: {}
   hasErrors: boolean
+  errorMessage: string
+  weatherData: {}
 }
 
 const initialState: WeatherState = {
   loading: false,
-  data: {},
-  hasErrors: false
+  postcodeData: {},
+  hasErrors: false,
+  errorMessage: '',
+  weatherData: {}
 }
 
 export const weatherSlice = createSlice({
@@ -20,39 +25,65 @@ export const weatherSlice = createSlice({
     getWeather: state => {
       state.loading = true
     },
-    getWeatherSuccess: (state, { payload }) => {
-      state.data = payload
+    getPostcodeSuccess: (state, { payload }) => {
+      state.postcodeData = payload
       state.loading = false
       state.hasErrors = false
     },
-    getWeatherFailure: state => {
+    getWeatherSuccess: (state, { payload }) => {
+      state.weatherData = payload
       state.loading = false
-      state.hasErrors = true
+      state.hasErrors = false
+    },
+    getWeatherFailure: (state, { payload }) => {
+      state.errorMessage = payload
+      state.loading = false
+      state.hasErrors = false
     }
   }
 })
 
 export const {
   getWeather,
-  getWeatherSuccess,
-  getWeatherFailure
+  getPostcodeSuccess,
+  getWeatherFailure,
+  getWeatherSuccess
 } = weatherSlice.actions
 
 export function getWeatherData(postcode: string): AppThunk {
-  return async (dispatch: any) => {
+  return (dispatch: any) => {
     dispatch(getWeather())
-    try {
-      const response = await fetch(
-        'http://localhost:3030/locations?postcode=' + postcode
+
+    axios
+      .get(
+        'http://localhost:3030/locations?postcode=' + postcode.toUpperCase(),
+        {}
       )
-      const data = await response.json()
-      dispatch(getWeatherSuccess(data))
-    } catch (error) {
-      dispatch(getWeatherFailure())
-    }
+      .then(res => {
+        dispatch(getPostcodeSuccess(res.data))
+        // start chained api request
+        axios
+          .get(
+            'http://localhost:3030/weather/?coord.lon=' +
+              res.data[0].longitude.toFixed(2) +
+              '&coord.lat=' +
+              res.data[0].latitude.toFixed(2),
+            {}
+          )
+          .then(result => {
+            dispatch(getWeatherSuccess(result.data))
+          })
+          .catch(error => {
+            dispatch(getWeatherFailure(error.message))
+          })
+        // end chained api request
+      })
+      .catch(err => {
+        dispatch(getWeatherFailure(err.message))
+      })
   }
 }
 
-export const fetchWeather = (state: RootState) => state.weather.data
+export const fetchWeather = (state: RootState) => state.weather.postcodeData
 
 export default weatherSlice.reducer
