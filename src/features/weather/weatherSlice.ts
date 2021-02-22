@@ -86,6 +86,6 @@ export function getWeatherData(postcode: string): AppThunk {
   }
 }
 
-export const fetchWeather = (state: RootState) => state.weather.postcodeData
+export const fetchWeather = (state: RootState) => state.weather.weatherData
 
 export default weatherSlice.reducer
