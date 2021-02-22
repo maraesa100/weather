@@ -1,20 +1,29 @@
 import React, { useState } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
-import { fetchWeather, getWeatherData } from './weatherSlice'
+import {
+  weatherObj,
+  getWeatherData,
+  hasWeather,
+  weatherRequestLoading
+} from './weatherSlice'
 import styles from './Weather.module.css'
+
+import { currentDate, fToC } from '../../helpers/helpers'
+
 import amadsLogo from '../../img/amads-logo.png'
-import { currentDate } from '../../helpers/helpers'
 
 export function Weather() {
-  const weather = useSelector(fetchWeather)
+  const weather = useSelector(weatherObj)
+  const weatherSuccess = useSelector(hasWeather)
+  const weatherLoading = useSelector(weatherRequestLoading)
   const dispatch = useDispatch()
   const [postCode, setPostcode] = useState('')
 
   return (
-    <div>
-      <div>
-        <img src={amadsLogo} alt='' />
+    <div className={styles.container}>
+      <img src={amadsLogo} alt='' className={styles.icon} />
 
+      <div>
         <input
           type='text'
           name='postcode_input'
@@ -26,25 +35,21 @@ export function Weather() {
       <button onClick={() => dispatch(getWeatherData(String(postCode)))}>
         Get Weather
       </button>
-      <div>
-        <h1>London</h1>
-      </div>
+      {weatherLoading && !weatherSuccess && <div>Loading</div>}
       <div>
         <h2>{currentDate()}</h2>
       </div>
-      <div>
-        <img src='' alt='' />
-        <h2>11 °</h2>
-      </div>
-
-      <div>
-        <p>7°/13°</p>
-        <p>Feels Like: 11°</p>
-      </div>
-
-      <div>
-        <h2>Clear</h2>
-      </div>
+      {weatherSuccess && (
+        <div>
+          <h2>{weather.name}</h2>
+          <h2>{fToC(weather.main.temp)}°C</h2>
+          <img src='' alt='' />
+          <p>
+            {fToC(weather.main.temp_min)}°C / {fToC(weather.main.temp_max)}°C
+          </p>
+          <p>Feels Like: {fToC(weather.main.feels_like)}°C</p>
+        </div>
+      )}
     </div>
   )
 }

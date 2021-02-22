@@ -42,3 +42,9 @@ export const currentDate = () => {
 
   return time
 }
+
+export const fToC = fahrenheit => {
+  var fTemp = fahrenheit
+  var fToCel = ((fTemp - 32) * 5) / 9
+  return fToCel.toFixed(1)
+}

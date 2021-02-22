@@ -6,16 +6,36 @@ interface WeatherState {
   loading: boolean
   postcodeData: {}
   hasErrors: boolean
+  hasWeatherData: boolean
   errorMessage: string
-  weatherData: {}
+  weatherData: {
+    name: string
+
+    main: {
+      temp: number
+      feels_like: number
+      temp_min: number
+      temp_max: number
+    }
+  }
 }
 
 const initialState: WeatherState = {
   loading: false,
   postcodeData: {},
   hasErrors: false,
+  hasWeatherData: false,
   errorMessage: '',
-  weatherData: {}
+  weatherData: {
+    name: '',
+
+    main: {
+      temp: 0,
+      feels_like: 0,
+      temp_min: 0,
+      temp_max: 0
+    }
+  }
 }
 
 export const weatherSlice = createSlice({
@@ -34,6 +54,7 @@ export const weatherSlice = createSlice({
       state.weatherData = payload
       state.loading = false
       state.hasErrors = false
+      state.hasWeatherData = true
     },
     getWeatherFailure: (state, { payload }) => {
       state.errorMessage = payload
@@ -86,6 +107,8 @@ export function getWeatherData(postcode: string): AppThunk {
   }
 }
 
-export const fetchWeather = (state: RootState) => state.weather.weatherData
+export const weatherObj = (state: RootState) => state.weather.weatherData
+export const hasWeather = (state: RootState) => state.weather.hasWeatherData
+export const weatherRequestLoading = (state: RootState) => state.weather.loading
 
 export default weatherSlice.reducer

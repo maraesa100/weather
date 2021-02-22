@@ -1,0 +1,10 @@
+.icon {
+  width: 50px;
+  height: auto;
+}
+
+.container {
+  grid-column-start: 5;
+  grid-column-end: 8;
+  padding: 50px;
+}
