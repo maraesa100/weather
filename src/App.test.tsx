@@ -7,7 +7,7 @@ const assert = require('chai').assert
 
 import { fToC } from '../src/helpers/helpers'
 
-test('renders learn react link', () => {
+test('renders weather app text', () => {
   const { getByText } = render(
     <Provider store={store}>
       <App />
