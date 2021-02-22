@@ -53,34 +53,36 @@ export const {
 export function getWeatherData(postcode: string): AppThunk {
   return (dispatch: any) => {
     dispatch(getWeather())
-
-    axios
-      .get(
-        'http://localhost:3030/locations?postcode=' + postcode.toUpperCase(),
-        {}
-      )
-      .then(res => {
-        dispatch(getPostcodeSuccess(res.data))
-        // start chained api request
-        axios
-          .get(
-            'http://localhost:3030/weather/?coord.lon=' +
-              res.data[0].longitude.toFixed(2) +
-              '&coord.lat=' +
-              res.data[0].latitude.toFixed(2),
-            {}
-          )
-          .then(result => {
-            dispatch(getWeatherSuccess(result.data))
-          })
-          .catch(error => {
-            dispatch(getWeatherFailure(error.message))
-          })
-        // end chained api request
-      })
-      .catch(err => {
-        dispatch(getWeatherFailure(err.message))
-      })
+    setTimeout(() => {
+      // mocks API delay
+      axios
+        .get(
+          'http://localhost:3030/locations?postcode=' + postcode.toUpperCase(),
+          {}
+        )
+        .then(res => {
+          dispatch(getPostcodeSuccess(res.data[0]))
+          // start chained api request
+          axios
+            .get(
+              'http://localhost:3030/weather/?coord.lon=' +
+                res.data[0].longitude.toFixed(2) +
+                '&coord.lat=' +
+                res.data[0].latitude.toFixed(2),
+              {}
+            )
+            .then(result => {
+              dispatch(getWeatherSuccess(result.data[0]))
+            })
+            .catch(error => {
+              dispatch(getWeatherFailure(error.message))
+            })
+          // end chained api request
+        })
+        .catch(err => {
+          dispatch(getWeatherFailure(err.message))
+        })
+    }, 1000)
   }
 }
 
