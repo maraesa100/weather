@@ -22,6 +22,7 @@ export function Weather() {
   return (
     <div className={styles.container}>
       <img src={amadsLogo} alt='' className={styles.icon} />
+      <h1>Weather App</h1>
 
       <div>
         <input
