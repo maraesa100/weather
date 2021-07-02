@@ -1,9 +1,9 @@
 import { configureStore, ThunkAction, Action } from '@reduxjs/toolkit'
-import weatherReducer from '../features/weather/weatherSlice'
+import MenuReducer from '../features/menu/menuSlice'
 
 export const store = configureStore({
   reducer: {
-    weather: weatherReducer
+    Menu: MenuReducer
   }
 })
 

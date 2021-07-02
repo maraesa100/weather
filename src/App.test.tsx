@@ -7,14 +7,14 @@ const assert = require('chai').assert
 
 import { fToC } from '../src/helpers/helpers'
 
-test('renders weather app text', () => {
+test('renders Menu app text', () => {
   const { getByText } = render(
     <Provider store={store}>
       <App />
     </Provider>
   )
 
-  expect(getByText('Weather App')).toBeInTheDocument()
+  expect(getByText('Menu App')).toBeInTheDocument()
 })
 
 describe('fToC', function() {
